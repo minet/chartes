@@ -1,0 +1,160 @@
+<div id="doc">
+  <h1 class="text-center" style="padding-bottom: 1%; padding-top: 1%">{{'rules.title' | translate}}</h1>
+  <div style="width: 800px; margin: auto;" *ngIf="this.signsuccess===true" class="alert alert-success success text-center" >{{'rules.successful_signed' | translate}}</div>
+  <div style="width: 800px; margin: auto;" *ngIf="this.generatesuccess===true" class="alert alert-success success text-center" >{{'rules.successful_generated' | translate}}</div>
+  <br>
+  <div class="overflow-auto text-justify card rules" style="margin: auto; height: 800px; width: 80%; padding-left: 2%;padding-right: 2%;padding-bottom: 2%">
+    <p>{{'rules.the_present_rules_define' | translate}}</p>
+
+    <p><h5 class="text-center"> {{'rules.h1' | translate}}</h5>
+    <p>{{'rules.p1' | translate}}</p>
+    <p>
+    <ul>
+      <li>{{'rules.p1_1' | translate}}</li>
+      <li>{{'rules.p1_2' | translate}}</li>
+      <li> {{'rules.p1_3' | translate}}</li></ul>
+    <p><h5 class="text-center">{{'rules.h2' | translate}}</h5>
+
+    <p>{{'rules.p2' | translate}}</p>
+
+    <p><h5 class="text-center">{{'rules.h3' | translate}}</h5>
+
+    <p>  {{'rules.p3' | translate}}</p>
+
+    <p><h6 class="text-center">{{'rules.h4' | translate}}</h6>
+
+    <p> {{'rules.p4' | translate}}</p>
+
+    <p><h6 class="text-center"> {{'rules.h5' | translate}}</h6>
+    <p>{{'rules.p5' | translate}}</p>
+    <p>
+    <ul>
+      <li>{{'rules.h5_1' | translate}}</li>
+      <li>{{'rules.h5_2' | translate}}</li>
+      <li>{{'rules.h5_3' | translate}}</li>
+      <li>{{'rules.h5_5' | translate}}</li>
+      <li>{{'rules.h5_4' | translate}}</li></ul>
+
+<!--    <p>{{'rules.p6' | translate}}</p>
+    <p><ul>
+    <li>{{'rules.p6_1' | translate}}</li>
+    <li>{{'rules.p6_2' | translate}}</li>
+    <li>{{'rules.p6_3' | translate}}</li>
+    <li>{{'rules.p6_4' | translate}}</li>
+  </ul> 4 points de l'adhérent, qui n'ont pas leur place ici-->
+
+    <p><h5 class="text-center">{{'rules.h6' | translate}}</h5>
+    <p>{{'rules.p8' | translate}}</p>
+    <p>{{'rules.p9' | translate}}</p>
+
+    <p><h5 class="text-center">{{'rules.h7' | translate}}</h5>
+    <p>{{'rules.p10' | translate}} </p>
+
+    <p><h5 class="text-center">{{'rules.h8' | translate}}</h5>
+    <p>{{'rules.p11' | translate}}</p>
+    <p><ul>
+    <li>{{'rules.p11_1' | translate}}</li>
+    <li>{{'rules.p11_2' | translate}}</li>
+    <li>{{'rules.p11_3' | translate}}</li>
+    <li>{{'rules.p11_4' | translate}}</li></ul>
+  </div>
+ <div class="divsign" *ngIf="this.getUser().signedminet===false && this.getUser().username && !this.getUser().admin">
+   <div style="margin-top: 3%;margin-left: 2%;margin-right: 2%">
+     <div class="row">
+       <div class="col-sm-1" style="text-align: center">
+         <input ngModel id="checkbox1" name="accepted1" #accepted1="ngModel" type="checkbox" class="col-sm-1">
+       </div>
+       <div class="col-sm-11 rules1">{{'rules.by_ticking_1' | translate}}</div>
+     </div>
+     <br>
+     <div class="row">
+       <div class="col-sm-1" style="text-align: center">
+         <input ngModel id="checkbox2" name="accepted2" #accepted2="ngModel" type="checkbox" class="col-sm-1">
+       </div>
+       <div class="col-sm-11 rules2">{{'rules.by_ticking_2' | translate}}</div>
+     </div>
+     <br>
+     <div class="row">
+       <div class="col-sm-1" style="text-align: center">
+         <input ngModel id="checkbox3" name="accepted3" #accepted3="ngModel" type="checkbox" class="col-sm-1">
+       </div>
+       <div class="col-sm-11 rules3">{{'rules.by_ticking_3' | translate}}</div>
+     </div>
+     <br>
+     <div class="row">
+       <div class="col-sm-1" style="text-align: center">
+         <input ngModel id="checkbox4" name="accepted4" #accepted4="ngModel" type="checkbox" class="col-sm-1">
+       </div>
+       <div class="col-sm-11 rules3">{{'rules.by_ticking_4' | translate}}</div>
+     </div>
+    </div>
+    <br>
+     <div class="row">
+       <div class="col-sm-1" style="text-align: center">
+         <input ngModel id="checkbox5" name="accepted5" #accepted5="ngModel" type="checkbox" class="col-sm-1">
+       </div>
+       <div class="col-sm-11 rules3">{{'rules.by_ticking_5' | translate}}</div>
+     </div>
+    <br>
+    <div style="margin-left: 20px" class="col" *ngIf="!this.getUser().admin">
+      <button *ngIf="accepted1.value && accepted2.value && accepted3.value && accepted4.value && accepted5.value" class="btn btn-primary" (click)="set_adh_signed()" style="margin-left: 20px; margin-bottom: 2%">{{"checkout.sign_the_rules" | translate}}</button>
+      <button *ngIf="!accepted1.value || !accepted2.value || !accepted3.value || !accepted4.value || !accepted5.value" class="btn btn-primary" style="margin-left: 20px; margin-bottom: 2%" disabled>{{"checkout.sign_the_rules" | translate}}</button>
+    </div>
+  </div>
+  <br>
+  <div class="alreadysigned" style="text-align: center" *ngIf="this.getUser().signedminet===true && this.getUser().username && !this.getUser().admin">
+    <p class="text-center text-success" >{{'rules.already_signed' | translate}} {{ this.getUser().datesignedminet }}</p>
+    <button type="button" class="btn btn-primary" (click)="generate_charte()">{{'rules.generate_charte' | translate}}</button>
+  </div>
+  <div class="nopermission bg-danger text-dark" style="text-align: center" *ngIf="this.getUser().nopermission">
+    <p>{{'rules.not_permission' | translate}}</p>
+  </div>
+  <div class="admin_sign" *ngIf="this.getUser().admin">
+    <h5 class="text-center">{{'rules.admin' | translate}}</h5>
+    <form class="form-inline">
+      <div class="row">
+        <div class="col-sm-1" style="text-align: center">
+          <input ngModel id="checkbox1" name="accepted1" #accepted1="ngModel" type="checkbox" class="col-sm-1">
+        </div>
+        <div class="col-sm-11 rules1">{{'rules.by_ticking_1' | translate}}</div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-1" style="text-align: center">
+          <input ngModel id="checkbox2" name="accepted2" #accepted2="ngModel" type="checkbox" class="col-sm-1">
+        </div>
+        <div class="col-sm-11 rules2">{{'rules.by_ticking_2' | translate}}</div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-1" style="text-align: center">
+          <input ngModel id="checkbox3" name="accepted3" #accepted3="ngModel" type="checkbox" class="col-sm-1">
+        </div>
+        <div class="col-sm-11 rules3">{{'rules.by_ticking_3' | translate}}</div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-1" style="text-align: center">
+          <input ngModel id="checkbox4" name="accepted4" #accepted4="ngModel" type="checkbox" class="col-sm-1">
+        </div>
+        <div class="col-sm-11 rules3">{{'rules.by_ticking_4' | translate}}</div>
+      </div>
+      <br>
+      <div class="row">
+        <div class="col-sm-1" style="text-align: center">
+          <input ngModel id="checkbox5" name="accepted5" #accepted5="ngModel" type="checkbox" class="col-sm-1">
+        </div>
+        <div class="col-sm-11 rules3">{{'rules.by_ticking_5' | translate}}</div>
+      </div>
+      <br>
+      <div class="form-group mx-sm-3 mb-2">
+        <input type="text" ngModel #pseudo="ngModel" style="margin-left: 40px;" class="form-control" name="pseudo" id="pseudo" placeholder="Pseudo">
+      </div>
+      <button style="margin-left: 53px; margin-top: 10px" *ngIf="accepted1.value && accepted2.value && accepted3.value && accepted4.value && accepted5.value && pseudo.value" type="submit" class="btn btn-primary mb-2" (click)="set_adh_signed(pseudo.value)">{{'checkout.sign_the_rules' | translate}}</button>
+      <button style="margin-left: 53px; margin-top: 10px" *ngIf="!accepted1.value || !accepted2.value || !accepted3.value || !accepted4.value || !accepted5.value || !pseudo.value" type="submit" class="btn btn-primary mb-2" disabled>{{'checkout.sign_the_rules' | translate}}</button>
+    </form>
+  </div>
+  <div class="noconnected" *ngIf="!this.getUser().username">
+    <p class="text-center text-primary">{{'rules.need_login' | translate}}</p>
+  </div>
+</div>

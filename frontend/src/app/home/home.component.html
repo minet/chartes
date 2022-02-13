@@ -1,0 +1,41 @@
+<div class="card text-center">
+  <div class="card-body">
+    <h5 class="card-title">{{'welcome.title' | translate}}</h5>
+    <p class="card-text">{{'welcome.description' | translate}}</p>
+    <br>
+    <img width="200px" src="./assets/images/minet_dark.png">
+    <div *ngIf="this.userService.validToken && !this.getUser().admin" style="margin-top: 20px;">
+      <a class="btn btn-primary btn-lg" *ngIf="this.getUser().signedminet===false" [routerLink]="['charteminet']">{{'welcome.sign_minet' | translate}} </a>
+      <a class="btn btn-success btn-lg" *ngIf="this.getUser().signedminet===true || this.getUser().admin===true " [routerLink]="['charteminet']">{{'welcome.read_minet' | translate}}  </a>
+      <a style="margin-left: 10px" class="btn btn-primary btn-lg" *ngIf="this.getUser().signedhosting===false" [routerLink]="['chartehosting']">{{'welcome.sign_hosting' | translate}} </a>
+      <a style="margin-left: 10px" class="btn btn-success btn-lg" *ngIf="this.getUser().signedhosting===true || this.getUser().admin===true" [routerLink]="['chartehosting']">{{'welcome.read_hosting' | translate}} </a>
+    </div>
+    <div style="margin: auto;" class="home container flex-fill" *ngIf="this.getUser().admin">
+      <table style="margin: auto;" cellpadding="30">
+        <tr>
+          <td>
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Signatures MiNET</h5>
+                <a class="nav-link" [routerLink]="['charteminet']" [routerLinkActiveOptions]="{exact: true}" [routerLinkActive]="['active', 'text-primary']"class="btn btn-primary">{{ this.countminet }}</a>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Signatures Hosting</h5>
+                <a  class="nav-link" [routerLink]="['chartehosting']" [routerLinkActiveOptions]="{exact: true}" [routerLinkActive]="['active', 'text-primary']" class="btn btn-primary">{{ this.counthosting }}</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div *ngIf="!this.userService.validToken">
+      <p>Pour signer les chartes, il vous faut vous connecter.</p>
+      <button class="btn btn-success btn-lg" type="button">Login </button>
+    </div>
+  </div>
+</div>
+

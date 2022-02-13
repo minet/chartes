@@ -1,0 +1,8 @@
+{
+    "require": {
+        "zendframework/zendframework": "^2.5",
+        "setasign/fpdf": "^1.8",
+        "setasign/fpdi-fpdf": "^2.3",
+        "phpmailer/phpmailer": "^6.5"
+    }
+}

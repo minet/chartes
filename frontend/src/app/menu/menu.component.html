@@ -1,0 +1,23 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark color-white">
+  <a class="navbar-brand" style="margin-left: 10px" href="#" [routerLink]="['']" ><img width="100px" src="assets/images/minet.png"></a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a href="#" class="nav-link" [routerLink]="['charteminet']" [routerLinkActiveOptions]="{exact: true}" [routerLinkActive]="['active', 'text-primary']">Charte MiNET</a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link" [routerLink]="['chartehosting']" [routerLinkActiveOptions]="{exact: true}" [routerLinkActive]="['active', 'text-primary']">Charte Hosting</a>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link" *ngIf="!(validToken$ | async)" (click)="userService.login()">Login</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" *ngIf="(validToken$ | async)" (click)="userService.logout()">Logout</a>
+      </li>
+    </ul>
+  </div>
+</nav>
