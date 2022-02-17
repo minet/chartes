@@ -1,0 +1,39 @@
+stages:  
+    - dependencies  
+    - deploy
+
+install_dependencies_angular:  
+    stage: dependencies  
+    image: node  
+    before_script:    
+        - cd frontend  
+    script:    
+        - npm ci --prefer-offline --no-audit  
+    artifacts:    
+        paths:      
+            - frontend/node_modules    
+        expire_in: 1 days
+
+deploy_backend:  
+    stage: deploy  
+    before_script:    
+        - sudo -u www-data /bin/rm -rf /var/www/backend/*.php  
+    script:    
+        - sudo -u www-data /bin/cp -r backend/*.php /var/www/backend/  
+    tags:    
+        - chartes  
+    only:    
+        - main
+
+deploy_frontend:  
+    stage: deploy  
+    script:    
+        - sudo -u www-data /bin/rm -rf /var/www/frontend/src    
+        - sudo -u www-data /bin/cp -r frontend/src /var/www/frontend/    
+        - cd /var/www/frontend     
+        - sudo /usr/bin/ng build  
+    tags:    
+        - chartes  
+    only:    
+        - main
+
