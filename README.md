@@ -11,7 +11,7 @@ Pour la partie `frontend`, rendez-vous dans le dossier frontend et lancez `ng se
 
 Pour que le backend et le frontend puissent communiquer, vous devez modifier : 
 - dans le frontend, modifier la variable allowedUrls: dans `app.module.ts` et public `SERVER_URL` dans `auth-service.ts` pour renseigner l'ip du backend.
-- exporter les variables d'environnement suivantes pour que le backend puisse les utiliser : 
+- exporter les variables d'environnement suivantes dans la configuration apache2 pour que le backend puisse les utiliser : 
 
 ```
 dbip : ip de la database
