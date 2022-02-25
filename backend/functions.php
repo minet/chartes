@@ -29,7 +29,7 @@ function get_adh($adh) {
   if($adh == "")
     $adh = get_id();
   global $mysqli;
-  $result = $mysqli->query("select id,login,mail,nom,prenom,signedminet,signedhosting,datesignedminet,datesignedhosting from adherents where login = '". mysqli_escape_string($mysqli, $adh) ."' limit 1");
+  $result = $mysqli->query("select id,login,mail,nom,prenom,datesignedminet,datesignedhosting from adherents where login = '". mysqli_escape_string($mysqli, $adh) ."' limit 1");
   return $result->fetch_assoc();
 }
 

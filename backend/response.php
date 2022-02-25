@@ -52,7 +52,20 @@ class responseObject {
         }
         curl_close($ch);
       } else {
-        $mysqli->query("update adherents set signedhosting = '1', ". ($hosting ? "datesignedhosting" : "datesignedminet") ." = '".date("Y-m-d H:i:s")."' where login = '" . mysqli_escape_string($mysqli, $r['login']) . "' limit 1");
+          $url = "https://adh6.minet.net/api/member/" . $r['id'] . "/charter/2";
+          $ch = curl_init($url);
+          curl_setopt($ch, CURLOPT_PUT, true);
+          curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+          curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+          $content = curl_exec($ch);
+          $code = curl_getinfo($ch , CURLINFO_HTTP_CODE);
+          if ($code == 204) {
+              generate_charte($language, $hosting, $adh);
+              send_mail($language, $adh);
+          } else {
+              $this->error = "Permission insuffisante ou problème interne !";
+              unset($this->response);
+          }
       }
       $this->response = "Signature effectuée";
     } else {
@@ -62,7 +75,7 @@ class responseObject {
 
   function regenerate_charte($language = "en", $hosting = false, $adh = "") {
     $r = get_adh($adh);
-    if(($r['signedminet'] && !$hosting) || ($r['signedhosting'] && $hosting)) {
+    if(($r['datesignedminet'] && !$hosting) || ($r['datesignedhosting'] && $hosting)) {
       $this->response = "Charte régénérée";
       send_mail($language, $adh, true);
     } else
@@ -71,13 +84,13 @@ class responseObject {
 
   function countminet() {
     global $mysqli;
-    $result = $mysqli->query("select id from adherents where signedminet = '1'");
+    $result = $mysqli->query("select id from adherents where datesignedminet <> NULL");
     $this->response = mysqli_num_rows($result);
   }
 
   function counthosting() {
     global $mysqli;
-    $result = $mysqli->query("select id from adherents where signedhosting = '1'");
+    $result = $mysqli->query("select id from adherents where datesignedhosting <> NULL");
     $this->response = mysqli_num_rows($result);
   }
 
