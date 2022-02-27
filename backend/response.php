@@ -84,13 +84,13 @@ class responseObject {
 
   function countminet() {
     global $mysqli;
-    $result = $mysqli->query("select id from adherents where datesignedminet <> NULL");
+    $result = $mysqli->query("select id from adherents where datesignedminet <> 'NULL'");
     $this->response = mysqli_num_rows($result);
   }
 
   function counthosting() {
     global $mysqli;
-    $result = $mysqli->query("select id from adherents where datesignedhosting <> NULL");
+    $result = $mysqli->query("select id from adherents where datesignedhosting <> 'NULL'");
     $this->response = mysqli_num_rows($result);
   }
 
