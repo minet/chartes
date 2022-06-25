@@ -24,15 +24,22 @@ export class HomeComponent implements OnInit {
     }
   }
   public validToken$: Observable<boolean>;
+
+    /**
+     * Fonction au rechargement du module. Permet de recharger les informations de l'utilisateur et le compte de chartes signées.
+     */
   ngOnInit(): void {
       setTimeout(() => {  this.userService.getUser().subscribe((user) => this.user = user); // on laisse une seconde pour charger l'user avant de check si il a validé
         this.validToken$ = this.userService.validToken();
         this.validToken$.subscribe();
         if (this.userService.validToken()) {
+
+          // Pas besoin de recharger les infos de signature de charte d'un admin
           if (this.getUser().admin === false) {
             this.has_adh_signed();
             this.has_adh_signed_hosting()
           } else {
+            // Pas besoin de recharger les infos du compte de chartes quand on est non admin
             this.count_minet();
             this.count_hosting();
           }
@@ -41,11 +48,21 @@ export class HomeComponent implements OnInit {
 
   }
 
+    /**
+     * Permet de renvoyer l'objet user.
+     * @return : user
+     */
   getUser(): User {
       return this.user;
   }
 
+    /**
+     * Fonction permettant de renvoyer le compte du nombre de chartes de fonctionnement réseau signées.
+     * @return met countminet à la bonne valeur, sinon erreur.
+     */
   count_minet() {
+
+    // Appel au backend pour obtenir le nombre de chartes signées.
     this.http.get(this.authService.SERVER_URL + "?countminet=1", {observe: 'response'})
       .subscribe(rep => {
         this.error = rep.body['error'];
@@ -53,11 +70,19 @@ export class HomeComponent implements OnInit {
         if (this.error)
           window.alert(this.error);
         else {
+          // si tout va bien on met la variable du home countminet à la bonne valeur.
           this.countminet = this.response;
         }
       })
   }
+
+    /**
+     * Fonction permettant de renvoyer le compte du nombre de chartes d'utilisation d'hosting.
+     * @return met counthosting à la bonne valeur, sinon erreur.
+     */
   count_hosting() {
+
+    // Appel au backend pour obtenir le nombre de chartes signées.
     this.http.get(this.authService.SERVER_URL + "?counthosting=1", {observe: 'response'})
       .subscribe(rep => {
         this.error = rep.body['error'];
@@ -65,12 +90,19 @@ export class HomeComponent implements OnInit {
         if (this.error)
           window.alert(this.error);
         else {
+          // si tout va bien on met la variable du home countminet à la bonne valeur.
           this.counthosting = this.response;
         }
       })
   }
 
+    /**
+     * Permet de vérifier si on a signé la charte MiNET (en tant qu'adhérent)
+     * @return : met la variable user signedminet à la bonne valeur (true si oui, false si non)
+     */
   has_adh_signed() {
+
+    // Appel au backend pour savoir si on a signé.
     this.http.get(this.authService.SERVER_URL + "?getadhsigned=1", {observe: 'response'})
       .subscribe(rep => {
         this.error = rep.body['error'];
@@ -79,13 +111,21 @@ export class HomeComponent implements OnInit {
           window.alert(this.error);
         else {
           if (this.response == "signé") {
+            // On met la variable user signedhosting à la bonne valeur.
             this.getUser().signedminet = true;
           } else if (this.response == "non signé")
             this.getUser().signedminet = false;
         }
       })
   }
+
+    /**
+     * Permet de vérifier si on a signé la charte Hosting (en tant qu'adhérent)
+     * @return : met la variable user signedhosting à la bonne valeur (true si oui, false si non)
+     */
   has_adh_signed_hosting() {
+
+    // Appel au backend pour savoir si on a signé.
     this.http.get(this.authService.SERVER_URL + "?getadhsignedhosting=1", {observe: 'response'})
       .subscribe(rep => {
         this.error = rep.body['error'];
@@ -94,6 +134,7 @@ export class HomeComponent implements OnInit {
           window.alert(this.error);
         else {
           if (this.response == "signé") {
+            // On met la variable user signedhosting à la bonne valeur.
             this.getUser().signedhosting = true;
           } else if (this.response == "non signé")
             this.getUser().signedhosting = false;

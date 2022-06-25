@@ -45,6 +45,10 @@ export class UserService {
     );
   }
 
+  /**
+   * Permet de récupérer les informations de l'utilisateur via son token CAS.
+   * @return un objet User complet.
+   */
   getUser(): Observable<User> {
     return fromPromise(this.discoveryDocument$.then((result) => {
       const user: any = this.oauthService.getIdentityClaims();
@@ -58,6 +62,7 @@ export class UserService {
         this.oauthService.loadUserProfile().then(r => {
           if (!!r.attributes['memberOf']) {
             if (r.attributes['memberOf'].indexOf(this.authService.adminDn) > -1) {
+              // si la personne a le groupe admin on considère qu'elle est admin sur l'appli.
               this.user.admin = true;
             }
           }

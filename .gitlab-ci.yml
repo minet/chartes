@@ -3,16 +3,17 @@ stages:
     - deploy
 
 install_dependencies_angular:  
-    stage: dependencies  
-    image: node  
+    stage: dependencies
     before_script:    
         - cd frontend  
-    script:    
+    script:
         - npm ci --prefer-offline --no-audit  
     artifacts:    
         paths:      
             - frontend/node_modules    
         expire_in: 1 days
+    tags:
+        - chartes
 
 deploy_backend:  
     stage: deploy  

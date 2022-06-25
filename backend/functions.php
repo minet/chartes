@@ -6,18 +6,30 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 //Load Composer's autoloader
-require 'vendor/autoload.php';
+require 'vendor/autoload.php'; // utilisé pour la génération de chartes
+
+/**
+ * Permet de récupérer le login de l'adhérent via la réponse du CAS
+ * @return le login de l'adhérent
+ */
 function get_id() {
   global $casresponse;
   $todisp = json_decode($casresponse);
   return $todisp->sub;
 }
 
+/**
+ * Permet de savoir si la personne connectée est admin. DOnc si elle possède le groupe nécessaire à l'administration.
+ * @return true si la personne est admin
+ * @return false si la personne n'est pas admin
+ */
 function is_admin() {
   global $casresponse;
   global $_CONFIG;
+  // on regarde les groupes LDAP potentiels mentionnés dans la réponse CAS. 
   $attributesRoles = (json_decode($casresponse)->attributes)->memberOf;
   if($attributesRoles) {
+      // si la personne possède bien des groupes on check si le DN du groupe nécessaire est bien dans ceux-ci
     if (strpos(json_encode($attributesRoles), $_CONFIG['dnadmin']))
       return True;
     else
@@ -25,6 +37,11 @@ function is_admin() {
   }
 }
 
+/**
+ * Permet de récupérer les infos de l'adhérent. On devrait tout récupérer par ADH6 mais... l'API ne renvoie pas tout donc on fait via requête SQL.
+ * @param $adh login de l'adhérent si on est admin sinon rien.
+ * @return array tableau avec les informations de l'adhérent. 
+ */
 function get_adh($adh) {
   if($adh == "")
     $adh = get_id();
@@ -33,18 +50,28 @@ function get_adh($adh) {
   return $result->fetch_assoc();
 }
 
+/**
+ * Permet de générer le PDF lié à la charte que l'on souhaite signer ou faire signer.
+ * @param string $language language de la charte, par défaut anglais.
+ * @param false $hosting type de charte, par défaut MiNET
+ * @param string $adh login de l'adhérent si on est admin, sinon rien.
+ * @throws \setasign\Fpdi\PdfParser\CrossReference\CrossReferenceException
+ * @throws \setasign\Fpdi\PdfParser\Filter\FilterException
+ * @throws \setasign\Fpdi\PdfParser\PdfParserException
+ * @throws \setasign\Fpdi\PdfParser\Type\PdfTypeException
+ * @throws \setasign\Fpdi\PdfReader\PdfReaderException
+ */
 function generate_charte($language = 'en', $hosting = false, $adh = "") {
   global $mysqli;
-  $r = get_adh($adh ? $adh : get_id());
+  $r = get_adh($adh ? $adh : get_id()); // si on a déjà le login on l'utilise (admin) sinon on le récupère (user)
   if($r) {
-    // include composer packages
     define('FPDF_FONTPATH', 'vendor/setasign/fpdf/font/');
     require_once('vendor/setasign/fpdf/fpdf.php');
     require_once('vendor/setasign/fpdi/src/autoload.php');
-// Create new Landscape PDF
+
     $pdf = new FPDI('P', 'mm', array(210, 297));
 
-// Reference the PDF you want to use (use relative path)
+// Les modèles de charte sont dans ./backend/chartes_modele. Si vous les modifiez il faudra modifier les coordonnées de signature !
     if ($language == "fr")
       $pdf->setSourceFile("./chartes_modele/". ($hosting ? "chartehosting_fr2021.pdf" : "charte_fr2021.pdf")."");
     else
@@ -56,6 +83,8 @@ function generate_charte($language = 'en', $hosting = false, $adh = "") {
     $pdf->useImportedPage($pageId);
     $pdf->AddFont('AuthenticSignature', '', 'AuthenticSignature.php', true);
     $pdf->SetFont('Arial');
+
+    // ici sont les coordonnées de signature à modifier, qui dépendent du language utilisé pour la charte
     if ($language == "fr")
       $pdf->SetXY(115, 242.3);
     else
@@ -76,25 +105,32 @@ function generate_charte($language = 'en', $hosting = false, $adh = "") {
   }
 }
 
+/**
+ * Permet d'envoyer le mail signalant la signature de la charte.
+ * @param $language language de la charte, par défaut en anglais.
+ * @param string $adh login de l'adhérent si on est admin, sinon rien.
+ * @param false $regenerate définit si on souhaite régénérer une charte déjà signée. Ne sert pas à grand chose pour le moment.
+ */
 function send_mail($language, $adh = "", $regenerate = false) {
   $r = get_adh($adh ? $adh : get_id());
   if($r['mail']) {
-//Create an instance; passing `true` enables exceptions
+      // utilisation du plugin PHP PHPMailer qui marche pas mal.
     $mail = new PHPMailer(true);
     try {
-      //Server setting
+      //Configuration du serveur mail à utiliser
       $mail -> CharSet = "UTF-8";
-      $mail->isSMTP();                                            //Send using SMTP
-      $mail->Host       = 'smtp.minet.net';                     //Set the SMTP server to send through
-      $mail->SMTPAuth   = false;                                   //Enable SMTP authentication       //SMTP password       //Enable implicit TLS encryption
-      $mail->Port       = 25;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+      $mail->isSMTP();
+      $mail->Host       = 'smtp.minet.net';
+      $mail->SMTPAuth   = false;
+      $mail->Port       = 25;
 
-      //Recipients
+      //Informations d'envoi
       $mail->setFrom('chartes@minet.net', 'chartes@minet.net');
       $mail->addAddress($r['mail'], $r['prenom'] ." ". $r['nom']);     //Add a recipient
-      if(!$regenerate)
-        $mail->addCC('chartes@listes.minet.net');
-      //Content
+      if(!$regenerate) // inutile de renvoyer un mail à la ML en cas de régénération
+        $mail->addCC('chartes@listes.minet.net'); // on met la ML chartes en copie pour archive, il y a le président dedans.
+
+        // Contenu HTML du mail. Version anglaise et française.
       $mail->isHTML(true);                                  //Set email format to HTML
       if($language == 'en') {
         $mail->Subject = 'Signature of the charter ('. $r['prenom'] .' ' . $r['nom'] .')';
