@@ -3,19 +3,18 @@ stages:
     - deploy
 
 install_dependencies_angular:  
-    stage: dependencies  
-    image: node  
+    stage: dependencies
     before_script:    
         - cd frontend  
     script:
-        - export http_proxy="http://192.168.102.61:82/"
-        - export https_proxy="http://192.168.102.61:82/"
         - npm install npm@6.11.0 -g
         - npm ci --prefer-offline --no-audit  
     artifacts:    
         paths:      
             - frontend/node_modules    
         expire_in: 1 days
+    tags:
+        - chartes
 
 deploy_backend:  
     stage: deploy  
