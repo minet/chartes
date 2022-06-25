@@ -26,7 +26,7 @@ function get_id() {
 function is_admin() {
     global $casresponse;
     global $_CONFIG;
-    if(((json_decode($casresponse)->attributes)->is_naina) == true) // si la personne est nainA
+    if(((json_decode($casresponse)->attributes)->is_naina) == "true") // si la personne est nainA
         return True;
 
   // on regarde les groupes LDAP potentiels mentionnés dans la réponse CAS.
