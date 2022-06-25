@@ -13,6 +13,10 @@ export class MenuComponent implements OnInit {
   constructor(public user: User, public userService: UserService) { }
 
   public validToken$: Observable<boolean>;
+
+  /**
+   * Récupération des informations de l'utilisateur via son token.
+   */
   ngOnInit(): void {
     this.validToken$ = this.userService.validToken();
     this.validToken$.subscribe();
