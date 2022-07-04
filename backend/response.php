@@ -62,7 +62,7 @@ class responseObject {
             $r = get_adh($adh);
             
             // on utilise l'api adh6 pour faire signer la charte. Id hosting : 2, Id MiNET : 1.
-            $url = "https://adh6.minet.net/api/member/" . $r['id'] . "/charter/. "($hosting ? "2" : "1");
+            $url = "https://adh6.minet.net/api/member/" . $r['id'] . "/charter/" . ($hosting ? "2" : "1");
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_PUT, true);
             
