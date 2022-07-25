@@ -16,7 +16,7 @@ $headers = apache_request_headers();
 
 // cela permet de récupérer le token CAS lors de la connexion.
 $header = [
-  "Authorization:". $headers['Authorization']
+  "Authorization:". $headers['authorization']
 ];
 
 if($header) {
