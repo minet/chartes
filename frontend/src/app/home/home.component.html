@@ -1,6 +1,6 @@
 <div class="card text-center">
   <div class="card-body">
-    <h5 class="card-title">{{'welcome.title' | translate}}</h5>
+    <h2 class="card-title">{{'welcome.title' | translate}}</h2>
     <p class="card-text">{{'welcome.description' | translate}}</p>
     <br>
     <img width="200px" src="./assets/images/minet_dark.png">
@@ -10,7 +10,10 @@
       <a style="margin-left: 10px" class="btn btn-primary btn-lg" *ngIf="this.getUser().signedhosting===false" [routerLink]="['chartehosting']">{{'welcome.sign_hosting' | translate}} </a>
       <a style="margin-left: 10px" class="btn btn-success btn-lg" *ngIf="this.getUser().signedhosting===true || this.getUser().admin===true" [routerLink]="['chartehosting']">{{'welcome.read_hosting' | translate}} </a>
     </div>
-    <div style="margin: auto;" class="home container flex-fill" *ngIf="this.getUser().admin">
+    <div style="margin-top: 20px;" class="home container flex-fill" *ngIf="this.getUser().admin">
+      <h4>Statistiques</h4>
+      <h5 style="margin-top: 20px" *ngIf="this.currentDate.getMonth() < this.startYearMonth ">Année {{ this.currentDate.getFullYear() }} - {{ this.currentDate.getFullYear() - 1 }}</h5>
+      <h5 style="margin-top: 20px" *ngIf="this.currentDate.getMonth() >= this.startYearMonth ">Année {{ this.currentDate.getFullYear() }} - {{ this.currentDate.getFullYear() + 1}}</h5>
       <table style="margin: auto;" cellpadding="30">
         <tr>
           <td>
@@ -30,12 +33,55 @@
             </div>
           </td>
         </tr>
+        <tr *ngIf="this.getCountHostingArray()">
+          <td colspan="2">
+            <div style="display: block;" style="margin: auto;">
+              <canvas baseChart baseChart width="800" height="600"
+                      [type]="'line'"
+                      [data]="lineChartData"
+                      [options]="lineChartOptions"
+                      [legend]="lineChartLegend">
+              </canvas>
+            </div>
+          </td>
+        </tr>
       </table>
+
+      <div style="margin-left: 1px">
+        <h5>Anciennes années</h5>
+        <ng-template #loading *ngIf="!this.getCountHostingArray()">
+        </ng-template>
+        <table class="table table-striped" *ngIf="this.getCountHostingArray()">
+          <thead>
+            <tr>
+              <th scope="col">Année</th>
+              <th scope="col">Chartes MiNET</th>
+              <th scope="col">Chartes Hosting</th>
+            </tr>
+          </thead>
+          <tbody *ngIf="this.currentDate.getMonth() < this.startYearMonth">
+            <tr *ngFor='let in of counter(this.currentDate.getFullYear() - this.beginYear - 1) ;let i = index'>
+              <td>{{this.currentDate.getFullYear() - i - 1}} - {{this.currentDate.getFullYear() - i - 2}}</td>
+              <td>{{ this.count_date((this.currentDate.getFullYear() - i - 2), this.startYearMonth, false, true)}}</td>
+              <td>{{ this.count_date((this.currentDate.getFullYear() - i - 2), this.startYearMonth, true, true)}}</td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="this.currentDate.getMonth() >= this.startYearMonth">
+          <tr *ngFor='let in of counter(this.currentDate.getFullYear() - this.beginYear) ;let i = index'>
+            <td>{{this.currentDate.getFullYear() - i - 1}} - {{this.currentDate.getFullYear() - i }}</td>
+            <td>{{ this.count_date((this.currentDate.getFullYear() - i - 1), this.startYearMonth, false, true)}}</td>
+            <td>{{ this.count_date((this.currentDate.getFullYear() - i - 1), this.startYearMonth, true, true)}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
     <div *ngIf="!this.userService.validToken">
-      <p>Pour signer les chartes, il vous faut vous connecter.</p>
+      <p>{{'welcome.need_login' | translate}}</p>
       <button class="btn btn-success btn-lg" type="button">Login </button>
     </div>
   </div>
 </div>
+
+
 

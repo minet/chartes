@@ -104,11 +104,19 @@ class responseObject {
 
     /**
      * Permet de compter le nombre de chartes signée pour un type de charte en particulier via une requête SQL.
-     * @return le nombre de lignes obtenues dans la DB via une response.
+     * @return un tableau contenu le nombre de signatures par jour. (tableau jour x nombre de signatures)
      */
     function countcharter($hosting = false) {
         global $mysqli;
-        $result = $mysqli->query("select id from adherents where " . ($hosting ? "datesignedhosting" : "datesignedminet") . " <> 'NULL'");
-        $this->response = mysqli_num_rows($result);
+        if($hosting)
+            $date = "datesignedhosting";
+        else
+            $date = "datesignedminet";
+        $result = $mysqli->query("select CAST( $date AS Date ),count(*) from adherents where $date <> 'NULL' GROUP BY CAST($date AS Date)");
+        $rows = [];
+        while($row = $result->fetch_row()) {
+            $rows[] = $row;
+        }
+        $this->response=$rows;
     }
 }

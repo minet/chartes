@@ -104,5 +104,7 @@
       }
     }
   },
-  "defaultProject": "chartes"
+  "cli": {
+    "analytics": "65779340-28c9-4550-9bc4-8f1a1e007364"
+  }
 }
