@@ -1,2 +1,5 @@
-/frontend/.idea
-/frontend/node_modules
+frontend/.idea
+frontend/node_modules
+frontend/.idea
+backend/.idea
+backend/config.php
