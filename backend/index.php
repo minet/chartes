@@ -1,10 +1,11 @@
 <?php
+error_reporting(E_ERROR | E_PARSE);
 include_once("sql.php");
 include_once("response.php");
 include_once("functions.php");
 
 // on autorise seulement le frontend à interroger le backend, et seulement pour certains types de requêtes
-header("Access-Control-Allow-Origin: ". $_CONFIG['allowed_frontend']);
+header("Access-Control-Allow-Origin: *");
 header("Access-Control-Allow-Methods: PUT, GET, POST, DELETE");
 header("Access-Control-Allow-Headers: Authorization, Content-Type, Accept");
 header('Content-type: application/json');
@@ -15,7 +16,7 @@ $headers = apache_request_headers();
 
 // cela permet de récupérer le token CAS lors de la connexion.
 $header = [
-  "Authorization:". $headers['authorization']
+  "Authorization:". $headers['Authorization']
 ];
 
 if($header) {

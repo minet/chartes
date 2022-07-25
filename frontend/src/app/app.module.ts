@@ -16,6 +16,7 @@ import { OAuthModule, OAuthStorage} from "angular-oauth2-oidc";
 import {HttpClient, HttpClientModule} from '@angular/common/http';
 import {TranslateModule, TranslateLoader} from '@ngx-translate/core';
 import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import { NgChartsModule } from 'ng2-charts';
 
 
 export function storageFactory() : OAuthStorage {
@@ -43,6 +44,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     ModalModule.forRoot(),
     AppRoutingModule,
     HttpClientModule,
+    NgChartsModule,
     FormsModule,
     OAuthModule.forRoot({
       resourceServer: {
