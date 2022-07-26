@@ -62,15 +62,15 @@
           <tbody *ngIf="this.currentDate.getMonth() < this.startYearMonth">
             <tr *ngFor='let in of counter(this.currentDate.getFullYear() - this.beginYear - 1) ;let i = index'>
               <td>{{this.currentDate.getFullYear() - i - 1}} - {{this.currentDate.getFullYear() - i - 2}}</td>
-              <td>{{ this.count_date((this.currentDate.getFullYear() - i - 2), this.startYearMonth, false, true)}}</td>
-              <td>{{ this.count_date((this.currentDate.getFullYear() - i - 2), this.startYearMonth, true, true)}}</td>
+              <td>{{ this.count_date((this.currentDate.getFullYear() - i - 2), this.startYearMonth, this.getCountMinetArray(), true)}}</td>
+              <td>{{ this.count_date((this.currentDate.getFullYear() - i - 2), this.startYearMonth, this.getCountHostingArray(), true)}}</td>
             </tr>
           </tbody>
           <tbody *ngIf="this.currentDate.getMonth() >= this.startYearMonth">
           <tr *ngFor='let in of counter(this.currentDate.getFullYear() - this.beginYear) ;let i = index'>
             <td>{{this.currentDate.getFullYear() - i - 1}} - {{this.currentDate.getFullYear() - i }}</td>
-            <td>{{ this.count_date((this.currentDate.getFullYear() - i - 1), this.startYearMonth, false, true)}}</td>
-            <td>{{ this.count_date((this.currentDate.getFullYear() - i - 1), this.startYearMonth, true, true)}}</td>
+            <td>{{ this.count_date((this.currentDate.getFullYear() - i - 1), this.startYearMonth, this.getCountMinetArray(), true)}}</td>
+            <td>{{ this.count_date((this.currentDate.getFullYear() - i - 1), this.startYearMonth, this.getCountHostingArray(), true)}}</td>
           </tr>
           </tbody>
         </table>

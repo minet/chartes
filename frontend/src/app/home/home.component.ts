@@ -26,7 +26,6 @@ export class HomeComponent implements OnInit {
   public validToken$: Observable<boolean>;
   private countminetarray: []; // pour contenir les valeurs des cotisations par jour et la date
   private counthostingarray: []; // pour contenir les valeurs des cotisations par jour et la date
-  private countarray: []; // Pour contenir soit countminetarray, soit sa version hosting selon le cas étudié
   private date: Date;
   public currentDate = new Date(); // date actuelle pour les comparaisons
   public beginYear = 2021; // on démarre à la première année où on a lancé chartes, soit 2021
@@ -114,12 +113,20 @@ export class HomeComponent implements OnInit {
   }
 
     /**
-     * Permet de renvoyer l'array countminetarray
+     * Permet de renvoyer l'array counthosting
      * @return : array
      */
   getCountHostingArray(): any {
       return this.counthostingarray;
   }
+
+    /**
+     * Permet de renvoyer l'array countminetarray
+     * @return : array
+     */
+    getCountMinetArray(): any {
+        return this.countminetarray;
+    }
 
     /**
      * Fonction permettant de récupérer le tableau complet des valeurs de signature avec les dates
@@ -140,18 +147,18 @@ export class HomeComponent implements OnInit {
                             this.countminetarray = rep.body['response'];
 
                             if (this.currentDate.getMonth() >= this.startYearMonth) // si on démarre la nouvelle année scolaire on lit à partir du mois de départ jusqu'au mois de la prochaine année
-                                this.countminet = this.count_date(this.currentDate.getFullYear(), this.startYearMonth, false, true);
+                                this.countminet = this.count_date(this.currentDate.getFullYear(), this.startYearMonth, this.countminetarray, true);
                             else // si on est encore sur une année en cours on lit du mois de début (peut être année précédente) jusqu'à son pote de l'année qui suit
-                                this.countminet = this.count_date(this.currentDate.getFullYear() - 1, this.startYearMonth, false, true);
+                                this.countminet = this.count_date(this.currentDate.getFullYear() - 1, this.startYearMonth, this.countminetarray, true);
                         } else {
                             this.counthostingarray = rep.body['response'];
 
                             if (this.currentDate.getMonth() >= this.startYearMonth)
-                                this.counthosting = this.count_date(this.currentDate.getFullYear(), this.startYearMonth, true, true);
+                                this.counthosting = this.count_date(this.currentDate.getFullYear(), this.startYearMonth, this.counthostingarray, true);
                             else
-                                this.counthosting = this.count_date(this.currentDate.getFullYear() - 1, this.startYearMonth, true, true);
+                                this.counthosting = this.count_date(this.currentDate.getFullYear() - 1, this.startYearMonth, this.counthostingarray, true);
                         }
-                        if(this.lineChartData.labels.length == 0 && this.countminetarray && this.counthostingarray)
+                        if(this.lineChartData.labels.length == 0 && this.countminetarray.length > 0 && this.counthostingarray.length > 0)
                             this.fill_graph(); // on en profite pour rempli le graph si c'est pas déjà fait (si on a toutes les données)
                     }
                 }
@@ -165,9 +172,8 @@ export class HomeComponent implements OnInit {
         for(this.i = 2; this.i > 0; this.i--) { // on lit jusqu'en 2021, pas besoin de +
             for(this.j = (this.i == 2 ? this.currentDate.getMonth() - 2 : 1); this.j < 13; this.j++) { // volontairement laissé 12 mois + 2 pour avoir une plus belle lisibilité des données
                 this.lineChartData.labels.push(this.currentDate.getFullYear()+1-this.i + "-" + this.j);
-                console.log(this.j);
-                this.lineChartData.datasets[0].data.push(this.count_date(this.currentDate.getFullYear()+1-this.i, this.j - 1))
-                this.lineChartData.datasets[1].data.push(this.count_date(this.currentDate.getFullYear()+1-this.i, this.j - 1, true))
+                this.lineChartData.datasets[0].data.push(this.count_date(this.currentDate.getFullYear()+1-this.i, this.j - 1, this.countminetarray))
+                this.lineChartData.datasets[1].data.push(this.count_date(this.currentDate.getFullYear()+1-this.i, this.j - 1, this.counthostingarray))
                 if(this.j == this.currentDate.getMonth()+1 && this.i == 1) // si on dépasse le mois actuel dans l'année en cours on sort de la boucle
                     break;
             }
@@ -179,14 +185,9 @@ export class HomeComponent implements OnInit {
      * Fonction permettant de renvoyer le compte du nombre de chartes de fonctionnement réseau signées.
      * @return met countminet à la bonne valeur, sinon erreur.
      */
-  count_date(year?: number, month?: number, hosting = false, startFromMonth?: boolean): Number {
+  count_date(year?: number, month?: number, dataset=[], startFromMonth?: boolean): Number {
         this.count = 0;
-        console.log(hosting);
-        if(hosting == true)
-            this.countarray = this.counthostingarray;
-        else
-            this.countarray = this.countminetarray;
-        this.countarray.forEach(x => {
+        dataset.forEach(x => {
         this.date = new Date(x[0]);
         if((year && month) && (this.date.getFullYear() == year && this.date.getMonth() == month) && !startFromMonth)
             this.count += Number(x[1]);
@@ -203,7 +204,6 @@ export class HomeComponent implements OnInit {
      * @return : met la variable user signedminet à la bonne valeur (true si oui, false si non)
      */
   has_adh_signed() {
-
     // Appel au backend pour savoir si on a signé.
     this.http.get(this.authService.SERVER_URL + "?getadhsigned=1", {observe: 'response'})
       .subscribe(rep => {
@@ -226,7 +226,6 @@ export class HomeComponent implements OnInit {
      * @return : met la variable user signedhosting à la bonne valeur (true si oui, false si non)
      */
   has_adh_signed_hosting() {
-
     // Appel au backend pour savoir si on a signé.
     this.http.get(this.authService.SERVER_URL + "?getadhsignedhosting=1", {observe: 'response'})
       .subscribe(rep => {
