@@ -33,19 +33,16 @@
             </div>
           </td>
         </tr>
-        <tr *ngIf="this.getCountHostingArray()">
-          <td colspan="2">
-            <div style="display: block;" style="margin: auto;">
-              <canvas baseChart baseChart width="800" height="600"
-                      [type]="'line'"
-                      [data]="lineChartData"
-                      [options]="lineChartOptions"
-                      [legend]="lineChartLegend">
-              </canvas>
-            </div>
-          </td>
-        </tr>
       </table>
+
+      <div style="display: block;" style="margin: auto;">
+        <canvas baseChart baseChart width="800" height="600"
+                [type]="'line'"
+                [data]="lineChartData"
+                [options]="lineChartOptions"
+                [legend]="lineChartLegend">
+        </canvas>
+      </div>
 
       <div style="margin-left: 1px">
         <h5>Anciennes années</h5>

@@ -2,16 +2,16 @@ import {Component, OnInit, ViewChild} from '@angular/core';
 import { UserService } from "../user-service/user-service.component";
 import { AuthService} from "../auth-service/auth-service";
 import { HttpClient } from "@angular/common/http";
-import { Router} from "@angular/router";
+import { ActivatedRoute} from "@angular/router";
 import { User } from "../models/user";
 import {interval, Observable, timer} from "rxjs";
 import { CookieService } from 'ngx-cookie-service';
-import { TranslateService } from '@ngx-translate/core';
 import {Chart, ChartConfiguration, ChartOptions, ChartType} from "chart.js";
 import { BaseChartDirective } from 'ng2-charts';
 import {default as Annotation} from 'chartjs-plugin-annotation';
 import {waitForAsync} from "@angular/core/testing";
 import {timeout} from "rxjs/operators";
+import {TranslateModule, TranslateLoader, TranslateService} from '@ngx-translate/core';
 
 @Component({
   selector: 'app-home',
@@ -34,11 +34,9 @@ export class HomeComponent implements OnInit {
   private i: number;
   private j: number;
 
-  constructor(private translate: TranslateService, private cookie: CookieService, private http: HttpClient, private router: Router, private user: User, public userService: UserService, private authService: AuthService) {
-      Chart.register(Annotation)
-      if (cookie.get('lang') === 'fr'){
-      translate.use('fr');
-    }
+  constructor(private http: HttpClient, private user: User, public userService: UserService, private authService: AuthService, private route: ActivatedRoute, private translate: TranslateService, private cookie: CookieService) {
+      Chart.register(Annotation);
+      this.route.snapshot.paramMap.get('lang') == 'en' ? this.translate.use('en') && this.cookie.set('lang','en') : this.translate.use('fr') && this.cookie.set('lang','fr');
   }
     title = 'Signatures des chartes';
 
@@ -71,7 +69,7 @@ export class HomeComponent implements OnInit {
      * Options possibles pour la courbe. Ici on fait en sorte qu'on puisse redimensionner la courbe comme on veut via du css.
      */
     public lineChartOptions: ChartOptions<'line'> = {
-        responsive: false,
+        responsive: true,
         maintainAspectRatio: false
     };
     public lineChartLegend = true;

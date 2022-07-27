@@ -8,6 +8,7 @@ import {UserService} from "../user-service/user-service.component";
 import {AuthService} from "../auth-service/auth-service";
 import {TranslateModule, TranslateLoader, TranslateService} from '@ngx-translate/core';
 import {interval, Observable} from "rxjs";
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-charte-hosting',
@@ -22,10 +23,8 @@ export class CharteHostingComponent implements OnInit {
   public counthosting: BigInteger;
   public generatesuccess = false;
   public signsuccess = false; // pour faire apparaître l'encadré de succès de validation
-  constructor(public cookie: CookieService, private http: HttpClient, private router: Router, private user: User, public userService: UserService, public authService: AuthService, private translate: TranslateService) {
-    if (cookie.get('lang') === 'fr'){
-      translate.use('fr');
-    }
+  constructor(private http: HttpClient, private user: User, public userService: UserService, private cookie: CookieService, public authService: AuthService,  private route: ActivatedRoute, private translate: TranslateService) {
+      this.route.snapshot.paramMap.get('lang') == 'en' ? this.translate.use('en') && this.cookie.set('lang','en') : this.translate.use('fr') && this.cookie.set('lang','fr');
   }
 
 /**

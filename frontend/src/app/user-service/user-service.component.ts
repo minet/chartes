@@ -5,6 +5,7 @@ import {OAuthService} from 'angular-oauth2-oidc';
 import {authCodeFlowConfig} from '../sso.config';
 import {merge, Observable} from 'rxjs';
 import {fromPromise} from 'rxjs/internal-compatibility';
+import {CookieService} from 'ngx-cookie-service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +14,7 @@ export class UserService {
 
   private discoveryDocument$: Promise<boolean>;
 
-  constructor(private user: User, private authService: AuthService, private oauthService: OAuthService) {
+  constructor(private user: User, private authService: AuthService, private oauthService: OAuthService, private cookie: CookieService) {
     this.configureSingleSignOn();
   }
 
