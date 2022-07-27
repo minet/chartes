@@ -69,7 +69,7 @@ export class HomeComponent implements OnInit {
      * Options possibles pour la courbe. Ici on fait en sorte qu'on puisse redimensionner la courbe comme on veut via du css.
      */
     public lineChartOptions: ChartOptions<'line'> = {
-        responsive: false,
+        responsive: true,
         maintainAspectRatio: false
     };
     public lineChartLegend = true;
