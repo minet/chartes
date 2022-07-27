@@ -49,7 +49,7 @@ export function HttpLoaderFactory(http: HttpClient): TranslateHttpLoader {
     OAuthModule.forRoot({
       resourceServer: {
         allowedUrls: ['https://backchartes.minet.net/'],
-        //allowedUrls: ['http://localhost:5332/'],
+        //allowedUrls: ['http://localhost:8080/'],
         sendAccessToken: true
       }
     }),

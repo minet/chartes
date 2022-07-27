@@ -10,7 +10,7 @@ export class AuthService {
 
   // IP du backend à utiliser.
 
-  //public SERVER_URL = "http://localhost:5332/"
+  //public SERVER_URL = "http://localhost:8080/"
   public SERVER_URL = 'https://backchartes.minet.net/index.php';
   public adminDn = 'cn=adh6_admin,ou=groups,dc=minet,dc=net';
 }
