@@ -21,7 +21,7 @@
         </ul>
       </div>
       <div class="navbar-nav ms-auto"  *ngIf="!(validToken$ | async)">
-        <a href="#" class="nav-link" (click)="userService.login()" style="margin-right: 20px;">{{'menu.login' | translate}}</a>
+        <a class="nav-link" (click)="userService.login()" style="margin-right: 20px;">{{'menu.login' | translate}}</a>
       </div>
       <div class="navbar-nav ms-auto" *ngIf="(validToken$ | async)">
         <a class="nav-link" (click)="userService.logout()" style="margin-right: 20px;">{{'menu.logout' | translate}}</a>
