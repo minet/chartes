@@ -52,60 +52,62 @@
     <p>{{'ruleshosting.p7_3' | translate}}</p>
     <p>{{'ruleshosting.p7_4' | translate}}</p>
   </div>
-  <div class="divsign" *ngIf="this.getUser().signedhosting===false && this.getUser().username && !this.getUser().admin">
-    <div style="margin-top: 3%;margin-left: 2%;margin-right: 2%">
-      <div class="row">
-        <div class="col-sm-1" style="text-align: center">
-          <input ngModel id="checkbox1" name="accepted1" #accepted1="ngModel" type="checkbox" class="col-sm-1">
+  <div *ngIf="this.getUser()">
+    <div class="divsign" *ngIf="this.getUser().signedhosting===false && this.getUser().username && !this.getUser().admin">
+      <div style="margin-top: 3%;margin-left: 2%;margin-right: 2%">
+        <div class="row">
+          <div class="col-sm-1" style="text-align: center">
+            <input ngModel id="checkbox1" name="accepted1" #accepted1="ngModel" type="checkbox" class="col-sm-1">
+          </div>
+          <div class="col-sm-11 ruleshosting">{{'ruleshosting.by_ticking_1' | translate}}</div>
         </div>
-        <div class="col-sm-11 ruleshosting">{{'ruleshosting.by_ticking_1' | translate}}</div>
+        <br>
+        <div class="row">
+          <div class="col-sm-1" style="text-align: center">
+            <input ngModel id="checkbox2" name="accepted2" #accepted2="ngModel" type="checkbox" class="col-sm-1">
+          </div>
+          <div class="col-sm-11 rules2">{{'ruleshosting.by_ticking_2' | translate}}</div>
+        </div>
       </div>
       <br>
-      <div class="row">
-        <div class="col-sm-1" style="text-align: center">
-          <input ngModel id="checkbox2" name="accepted2" #accepted2="ngModel" type="checkbox" class="col-sm-1">
-        </div>
-        <div class="col-sm-11 rules2">{{'ruleshosting.by_ticking_2' | translate}}</div>
+      <div style="margin-left: 20px" class="col" *ngIf="!this.getUser().admin">
+        <button style="margin-left: 53px; margin-top: 10px" *ngIf="accepted1.value && accepted2.value" type="submit" class="btn btn-primary mb-2" (click)="set_adh_signed()">{{'checkout.sign_the_rules' | translate}}</button>
+        <button style="margin-left: 53px; margin-top: 10px" *ngIf="!accepted1.value || !accepted2.value" type="submit" class="btn btn-primary mb-2" disabled>{{'checkout.sign_the_rules' | translate}}</button>
       </div>
     </div>
     <br>
-    <div style="margin-left: 20px" class="col" *ngIf="!this.getUser().admin">
-      <button style="margin-left: 53px; margin-top: 10px" *ngIf="accepted1.value && accepted2.value" type="submit" class="btn btn-primary mb-2" (click)="set_adh_signed()">{{'checkout.sign_the_rules' | translate}}</button>
-      <button style="margin-left: 53px; margin-top: 10px" *ngIf="!accepted1.value || !accepted2.value" type="submit" class="btn btn-primary mb-2" disabled>{{'checkout.sign_the_rules' | translate}}</button>
+    <div class="alreadysigned" style="text-align: center" *ngIf="this.getUser().signedhosting===true && this.getUser().username && !this.getUser().admin">
+      <p class="text-center text-success" >{{'rules.already_signed' | translate}} {{ this.getUser().datesignedhosting }}</p>
+    </div>
+    <div class="nopermission bg-danger text-dark" style="text-align: center" *ngIf="this.getUser().nopermission">
+      <p>{{'ruleshosting.not_permission' | translate}}</p>
+    </div>
+    <div class="admin_sign" *ngIf="this.getUser().admin">
+      <h5 class="text-center">{{'rules.admin' | translate}}</h5>
+      <form class="form-inline">
+        <div class="row">
+          <div class="col-sm-1" style="text-align: center">
+            <input ngModel id="checkbox" name="accepted1" #accepted1="ngModel" type="checkbox" class="col-sm-1">
+          </div>
+          <div class="col-sm-11 ruleshosting1">{{'ruleshosting.by_ticking_1' | translate}}</div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-sm-1" style="text-align: center">
+            <input ngModel id="checkbox" name="accepted2" #accepted2="ngModel" type="checkbox" class="col-sm-1">
+          </div>
+          <div class="col-sm-11 ruleshosting2">{{'ruleshosting.by_ticking_2' | translate}}</div>
+        </div>
+        <br>
+        <div class="form-group mx-sm-3 mb-2">
+          <input type="text" ngModel #pseudo="ngModel" style="margin-left: 40px;" class="form-control" name="pseudo" id="pseudo" placeholder="Pseudo">
+        </div>
+        <button style="margin-left: 53px; margin-top: 10px" *ngIf="accepted1.value && accepted2.value && pseudo.value" type="submit" class="btn btn-primary mb-2" (click)="set_adh_signed(pseudo.value)">{{'checkout.sign_the_rules' | translate}}</button>
+        <button style="margin-left: 53px; margin-top: 10px" *ngIf="!accepted1.value || !accepted2.value || !pseudo.value" type="submit" class="btn btn-primary mb-2" disabled>{{'checkout.sign_the_rules' | translate}}</button>
+      </form>
     </div>
   </div>
-  <br>
-  <div class="alreadysigned" style="text-align: center" *ngIf="this.getUser().signedhosting===true && this.getUser().username && !this.getUser().admin">
-    <p class="text-center text-success" >{{'rules.already_signed' | translate}} {{ this.getUser().datesignedhosting }}</p>
-  </div>
-  <div class="nopermission bg-danger text-dark" style="text-align: center" *ngIf="this.getUser().nopermission">
-    <p>{{'ruleshosting.not_permission' | translate}}</p>
-  </div>
-  <div class="admin_sign" *ngIf="this.getUser().admin">
-    <h5 class="text-center">{{'rules.admin' | translate}}</h5>
-    <form class="form-inline">
-      <div class="row">
-        <div class="col-sm-1" style="text-align: center">
-          <input ngModel id="checkbox" name="accepted1" #accepted1="ngModel" type="checkbox" class="col-sm-1">
-        </div>
-        <div class="col-sm-11 ruleshosting1">{{'ruleshosting.by_ticking_1' | translate}}</div>
-      </div>
-      <br>
-      <div class="row">
-        <div class="col-sm-1" style="text-align: center">
-          <input ngModel id="checkbox" name="accepted2" #accepted2="ngModel" type="checkbox" class="col-sm-1">
-        </div>
-        <div class="col-sm-11 ruleshosting2">{{'ruleshosting.by_ticking_2' | translate}}</div>
-      </div>
-      <br>
-      <div class="form-group mx-sm-3 mb-2">
-        <input type="text" ngModel #pseudo="ngModel" style="margin-left: 40px;" class="form-control" name="pseudo" id="pseudo" placeholder="Pseudo">
-      </div>
-      <button style="margin-left: 53px; margin-top: 10px" *ngIf="accepted1.value && accepted2.value && pseudo.value" type="submit" class="btn btn-primary mb-2" (click)="set_adh_signed(pseudo.value)">{{'checkout.sign_the_rules' | translate}}</button>
-      <button style="margin-left: 53px; margin-top: 10px" *ngIf="!accepted1.value || !accepted2.value || !pseudo.value" type="submit" class="btn btn-primary mb-2" disabled>{{'checkout.sign_the_rules' | translate}}</button>
-    </form>
-  </div>
-  <div class="noconnected" *ngIf="!this.getUser().username">
+  <div class="noconnected" *ngIf="!this.getUser()">
     <p class="text-center text-primary">{{'rules.need_login' | translate}}</p>
   </div>
 </div>

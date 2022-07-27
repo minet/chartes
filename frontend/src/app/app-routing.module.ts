@@ -5,11 +5,12 @@ import { CharteMinetComponent} from './charte-minet/charte-minet.component'
 import { CharteHostingComponent} from './charte-hosting/charte-hosting.component'
 
 const routes: Routes = [
+  { path: '', component: HomeComponent },
   { path: ':lang', component: HomeComponent },
   { path: ':lang/', component: HomeComponent },
   { path: ':lang/charteminet', component: CharteMinetComponent},
   { path: ':lang/chartehosting', component: CharteHostingComponent},
-  { path: '', redirectTo: 'fr', pathMatch: 'prefix'},
+  { path: '', redirectTo: '', pathMatch: 'prefix'},
   { path: '**', redirectTo: '', pathMatch: 'full'},
 ];
 

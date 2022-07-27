@@ -92,7 +92,7 @@ export class HomeComponent implements OnInit {
                 if (this.getUser().admin === false) {
                     this.has_adh_signed();
                     this.has_adh_signed_hosting()
-                } else {
+                } else if(this.getUser().admin === true) {
                     // Pas besoin de recharger les infos du compte de chartes quand on est non admin
                     this.get_count_from_api();
                     this.get_count_from_api(true);

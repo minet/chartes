@@ -23,9 +23,7 @@ export class CharteMinetComponent implements OnInit {
   public counthosting: BigInteger;
   public generatesuccess = false;
   public signsuccess = false; // pour faire apparaître l'encadré de succès de validation
-  constructor(private http: HttpClient, private user: User, public userService: UserService, private cookie: CookieService, public authService: AuthService, private route: ActivatedRoute, private translate: TranslateService) {
-      this.route.snapshot.paramMap.get('lang') == 'en' ? this.translate.use('en') && this.cookie.set('lang','en') : this.translate.use('fr') && this.cookie.set('lang','fr');
-  }
+  constructor(private http: HttpClient, private user: User, public userService: UserService, private cookie: CookieService, public authService: AuthService, private route: ActivatedRoute) {}
 
     /**
      * Permet de récupérer les infos de l'utilisateur.
@@ -47,7 +45,7 @@ export class CharteMinetComponent implements OnInit {
 
     // récupération toutes les secondes des infos de l'utilisateur, notamment de si il a signé la charte.
     setTimeout(() => {  this.userService.getUser().subscribe((user) => this.user = user) // on laisse une seconde pour charger l'user avant de check si il a validé
-      if (this.userService.validToken && !this.getUser().admin && !this.getUser().nopermission) { // si le gars est connecté / existe
+      if (this.userService.validToken && this.getUser().name && !this.getUser().admin && !this.getUser().nopermission) { // si le gars est connecté / existe
 
         // récupération des infos liées à la signature de la charte par l'adhérent.
         this.has_adh_signed();

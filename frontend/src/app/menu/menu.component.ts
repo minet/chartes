@@ -14,7 +14,6 @@ import {TranslateModule, TranslateLoader, TranslateService} from '@ngx-translate
 export class MenuComponent implements OnInit {
 
   constructor(public user: User, public cookie: CookieService, public userService: UserService, private route: ActivatedRoute, private translate: TranslateService) {
-    this.cookie.get('lang') == 'en' ? this.translate.use('en') : this.translate.use('fr');
   }
 
   public validToken$: Observable<boolean>;
@@ -26,6 +25,7 @@ export class MenuComponent implements OnInit {
     this.validToken$ = this.userService.validToken();
     this.validToken$.subscribe();
     this.userService.getUser().subscribe((user) => this.user = user);
+    this.cookie.get('lang') == 'en' ? this.translate.use('en') : this.translate.use('fr');
   }
 
   /**
@@ -36,9 +36,11 @@ export class MenuComponent implements OnInit {
     if(lang == 'en') {
       this.cookie.set('lang', 'en');
       this.translate.use('en');
+      this.ngOnInit();
     } else {
       this.cookie.set('lang', 'fr');
       this.translate.use('fr');
+      this.ngOnInit();
     }
   }
 
