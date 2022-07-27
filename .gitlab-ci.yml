@@ -29,7 +29,7 @@ deploy_backend:
 deploy_frontend:  
     stage: deploy  
     script:    
-        - sudo -u www-data /bin/rm -rf /var/www/frontend/*
+        - sudo /bin/rm -rf /var/www/frontend/*
         - sudo -u www-data /bin/cp -r frontend/* /var/www/frontend/
         - cd /var/www/frontend     
         - sudo /usr/bin/ng build  
