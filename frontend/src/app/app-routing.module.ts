@@ -10,7 +10,6 @@ const routes: Routes = [
   { path: ':lang/', component: HomeComponent },
   { path: ':lang/charteminet', component: CharteMinetComponent},
   { path: ':lang/chartehosting', component: CharteHostingComponent},
-  { path: '', redirectTo: '', pathMatch: 'prefix'},
   { path: '**', redirectTo: '', pathMatch: 'full'},
 ];
 
