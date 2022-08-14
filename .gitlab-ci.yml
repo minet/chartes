@@ -31,7 +31,8 @@ deploy_frontend:
     stage: deploy  
     script:
         - cd frontend
-        - ng build
+        - /usr/bin/ng build
+        - sudo chown gitlab-runner:gitlab-runner * -R
         - sudo /bin/rm -rf /var/www/frontend/*
         - sudo -u www-data /bin/cp -r * /var/www/frontend/
     tags:    
