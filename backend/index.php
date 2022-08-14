@@ -55,7 +55,7 @@ if(get_id()) {
   else if ($_GET['list_nonsignatory'] && is_admin())
       $response->list_nonsignatory(); //
   else {
-      $response->response = "Bad request !";
+      $response->message = "Bad request !";
       $response->status = 400;
   }
   echo json_encode($response, JSON_UNESCAPED_UNICODE); // renvoi sous format JSON la réponse de l'API.

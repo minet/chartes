@@ -258,7 +258,7 @@ export class HomeComponent implements OnInit {
      */
     get_non_signatory_members() {
       // Appel au backend pour savoir si on a signé.
-      this.http.get(this.authService.SERVER_URL + "?list_nosignatory=1", {observe: 'response'})
+      this.http.get(this.authService.SERVER_URL + "?list_nonsignatory=1", {observe: 'response'})
           .subscribe(rep => {
               this.status = rep.body['status'];
               this.response = rep.body['message'];
