@@ -12,8 +12,8 @@ install_dependencies_angular:
         paths:      
             - frontend/node_modules    
         expire_in: 1 days
-    tags:
-        - chartes
+    only:
+        - main
 
 deploy_backend:  
     stage: deploy  

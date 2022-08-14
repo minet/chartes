@@ -18,7 +18,7 @@ import {ActivatedRoute} from '@angular/router';
 export class CharteMinetComponent implements OnInit {
   private stepper: Stepper;
   public response: string;
-  public error: string;
+  public status: number;
   public countminet: BigInteger;
   public counthosting: BigInteger;
   public generatesuccess = false;
@@ -62,12 +62,12 @@ export class CharteMinetComponent implements OnInit {
   // appel au backend pour vérifier si l'adhérent a signé.
   this.http.get(this.authService.SERVER_URL + "?getadhsigned=1", {observe: 'response'})
     .subscribe(rep => {
-      this.error = rep.body['error'];
-      this.response = rep.body['response'];
+      this.status = rep.body['status'];;
+      this.response = rep.body['message'];
 
       // si une erreur apparaît on l'affiche.
-      if (this.error)
-        window.alert(this.error);
+      if (this.status != 200)
+        window.alert(this.response);
       else {
         if (this.response == "signé") {
           this.getUser().signedminet = true;
@@ -90,12 +90,12 @@ export class CharteMinetComponent implements OnInit {
       // Appel backend pour obtenir la date de signature
       this.http.get(this.authService.SERVER_URL + "?getsigneddate=1", {observe: 'response'})
         .subscribe(rep => {
-          this.error = rep.body['error'];
-          this.response = rep.body['response'];
+          this.status = rep.body['status'];;
+          this.response = rep.body['message'];
 
           // si une erreur est présente on l'affiche.
-          if (this.error)
-            window.alert(this.error);
+          if (this.status != 200)
+            window.alert(this.response);
           else {
               // si pas d'erreur on met la variable user de date de signature à la bonne valeur.
               this.getUser().datesignedminet = this.response;
@@ -113,12 +113,12 @@ export class CharteMinetComponent implements OnInit {
     // appel au backend pour signer.
     this.http.get(this.authService.SERVER_URL + "?setadhsigned=" + (this.getUser().admin && pseudo ? pseudo : "1") + "&language=" + this.cookie.get('lang'), {observe: 'response'})
       .subscribe(rep => {
-        this.error = rep.body['error'];
-        this.response = rep.body['response'];
+        this.status = rep.body['status'];;
+        this.response = rep.body['message'];
 
         // si une erreur apparaît on l'affiche.
-        if (this.error) {
-          window.alert(this.error);
+        if (this.status != 200) {
+          window.alert(this.response);
         } else {
           if(!this.getUser().admin) // on ne veut pas rafraichir la signature pour un admin il a pas de compte dans fdpsql
             setTimeout( () => { this.has_adh_signed(); }, 1000 ); // on refraichit la signature de l'adhérent
@@ -138,10 +138,10 @@ export class CharteMinetComponent implements OnInit {
       // Appel backend pour regénérer la charte
     this.http.get(this.authService.SERVER_URL + "?regeneratecharte=" + (this.getUser().admin && pseudo ? pseudo : "1") + "&language=" + this.cookie.get('lang'), {observe: 'response'})
       .subscribe(rep => {
-        this.error = rep.body['error'];
-        this.response = rep.body['response'];
-        if (this.error) {
-          window.alert(this.error);
+        this.status = rep.body['status'];;
+        this.response = rep.body['message'];
+        if (this.status != 200) {
+          window.alert(this.response);
         } else {
           window.scroll(0, 0); // on remonte en haut
           this.generatesuccess = true; // pour afficher l'encadré de succès
