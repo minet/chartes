@@ -34,7 +34,7 @@ deploy_frontend:
         - sudo /usr/bin/ng build
         - sudo /bin/chown gitlab-runner:gitlab-runner * -R
         - sudo /bin/rm -rf /var/www/frontend/*
-        - sudo -u www-data /bin/cp -r * /var/www/frontend/
+        - sudo -u www-data /bin/cp -r ./* /var/www/frontend/
     tags:    
         - chartes  
     only:    
