@@ -6,9 +6,8 @@
  * error : message d'erreur quand un problème survient
  */
 class responseObject {
-    public $response;
-    public $error;
-
+    public $message;
+    public $status;
     /**
      * Permet de vérifier si un adhérent a signé une des deux chartes
      * @param false $hosting permet de définir si on parle de la charte hosting ou minet
@@ -21,11 +20,14 @@ class responseObject {
             $r = get_adh($adh);
             // on considère la charte signée si la date de signature n'est pas nulle
             if (!$hosting)
-                $this->response = ($r['datesignedminet'] ? "signé" : "non signé"); // on renvoie la valeur de la signature si le mec existe
+                $this->message = ($r['datesignedminet'] ? "signé" : "non signé"); // on renvoie la valeur de la signature si le mec existe
             else
-                $this->response = ($r['datesignedhosting'] ? "signé" : "non signé"); // on renvoie la valeur de la signature si le mec existe
-        } else
-            $this->error = "L'utilisateur n'existe pas !"; // on renvoie false si l'user n'existe pas
+                $this->message = ($r['datesignedhosting'] ? "signé" : "non signé"); // on renvoie la valeur de la signature si le mec existe
+            $this->status = 200;
+        } else {
+            $this->message = "L'utilisateur n'existe pas !"; // on renvoie false si l'user n'existe pas
+            $this->status = 404;
+        }
     }
 
     /**
@@ -38,11 +40,14 @@ class responseObject {
         if(get_adh($adh)) {
             $r = get_adh($adh);
             if(!$hosting)
-                $this->response = $r['datesignedminet']; // on renvoie la valeur de la signature si le mec existe
+                $this->message = $r['datesignedminet']; // on renvoie la valeur de la signature si le mec existe
             else
-                $this->response = $r['datesignedhosting']; // on renvoie la valeur de la signature si le mec existe
-        } else
-            $this->error = "L'utilisateur n'existe pas !"; // on renvoie false si l'user n'existe pas
+                $this->message = $r['datesignedhosting']; // on renvoie la valeur de la signature si le mec existe
+            $this->status = 200;
+        } else {
+            $this->message = "L'utilisateur n'existe pas !"; // on renvoie false si l'user n'existe pas
+            $this->status = 404;
+        }
     }
 
     /**
@@ -55,10 +60,10 @@ class responseObject {
     function set_adh_signed($language = "en", $hosting = false, $adh = "") {
         global $header;
         $this->has_adh_signed($hosting, $adh);
-        if($this->response == "signé") {
-            $this->error = "Cet adhérent a déjà signé.";
-            unset($this->response);
-        } else if ($this->response == "non signé") {
+        if($this->message == "signé") {
+            $this->message = "Cet adhérent a déjà signé.";
+            $this->status = 400;
+        } else if ($this->message == "non signé") {
             $r = get_adh($adh);
             
             // on utilise l'api adh6 pour faire signer la charte. Id hosting : 2, Id MiNET : 1.
@@ -75,13 +80,15 @@ class responseObject {
                 generate_charte($language, $hosting, $adh);
                 send_mail($language, $adh);
             } else {
-                $this->error = "Permission insuffisante ou problème interne !";
-                unset($this->response);
+                $this->status = 403;
+                $this->message = "Permission insuffisante ou problème interne !";
             }
             curl_close($ch);
-            $this->response = "Signature effectuée";
+            $this->message = "Signature effectuée";
+            $this->status = 200;
         } else {
-            $this->response = "Une erreur est survenue";
+            $this->message = "Adhérent inexistant ou erreur interne";
+            $this->status = 404;
         }
     }
 
@@ -94,12 +101,15 @@ class responseObject {
     function regenerate_charte($language = "en", $hosting = false, $adh = "") {
         $r = get_adh($adh);
         if(($r['datesignedminet'] && !$hosting) || ($r['datesignedhosting'] && $hosting)) {
-            $this->response = "Charte régénérée";
+            $this->message = "Charte régénérée";
             
             // la variable regenerate de la fonction permet de regénérer un PDF avant l'envoi du mail 
             send_mail($language, $adh, true);
-        } else
-            $this->error = "La charte n'a pas été signée ou un problème a eu lieu!";
+            $this->status = 200;
+        } else {
+            $this->message = "L'adhérent n'a pas signé la charte concernée !";
+            $this->status = 403;
+        }
     }
 
     /**
@@ -117,6 +127,7 @@ class responseObject {
         while($row = $result->fetch_row()) {
             $rows[] = $row;
         }
-        $this->response=$rows;
+        $this->message=$rows;
+        $this->status = 200;
     }
 }

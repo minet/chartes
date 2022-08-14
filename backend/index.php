@@ -52,8 +52,10 @@ if(get_id()) {
     $response->countcharter(); // on ne veut que les chartes miNET
   else if ($_GET['counthosting'] && is_admin())
     $response->countcharter(true); // on ne veut que les chartes hosting
-  else
-    $response->error = "Bad action !";
+  else {
+      $response->response = "Bad request !";
+      $response->status = 400;
+  }
   echo json_encode($response, JSON_UNESCAPED_UNICODE); // renvoi sous format JSON la réponse de l'API.
 }
 

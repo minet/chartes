@@ -18,7 +18,7 @@ import {ActivatedRoute} from '@angular/router';
 export class CharteHostingComponent implements OnInit {
   private stepper: Stepper;
   public response: string;
-  public error: string;
+  public status: number;
   public countminet: BigInteger;
   public counthosting: BigInteger;
   public generatesuccess = false;
@@ -39,7 +39,6 @@ export class CharteHostingComponent implements OnInit {
      */
   ngOnInit(): void {
     this.validToken$ = this.userService.validToken();
-
     // on souscrit au token d'infos de l'utilisateur.
     this.validToken$.subscribe();
     // récupération toutes les secondes des infos de l'utilisateur, notamment de si il a signé la charte.
@@ -56,16 +55,15 @@ export class CharteHostingComponent implements OnInit {
      * @return met signedhosting (variable user) à true si signé, sinon false.
      */
   has_adh_signed() {
-
     // appel au backend pour vérifier si l'adhérent a signé.
     this.http.get(this.authService.SERVER_URL + "?getadhsignedhosting=1", {observe: 'response'})
       .subscribe(rep => {
-        this.error = rep.body['error'];
-        this.response = rep.body['response'];
+        this.status = rep.body['status'];;
+        this.response = rep.body['message'];
 
         // si une erreur apparaît on l'affiche.
-        if (this.error)
-          window.alert(this.error);
+        if (this.status != 200)
+          window.alert(this.response);
         else {
           if (this.response == "signé") {
             this.getUser().signedhosting = true;
@@ -79,21 +77,20 @@ export class CharteHostingComponent implements OnInit {
   }
 
     /**
-     * Fonction permettant de récupérr la date de signature de la charte.
+     * Fonction permettant de récupérer la date de signature de la charte.
      * @return met datesignedhosting à la valeur de la date de signature le cas échéant.
      */
   get_adh_date_signed() {
     if(this.getUser().signedhosting == true) {
-
       // Appel backend pour récupérer la date de signature
       this.http.get(this.authService.SERVER_URL + "?getsigneddatehosting=1", {observe: 'response'})
         .subscribe(rep => {
-          this.error = rep.body['error'];
-          this.response = rep.body['response'];
+          this.status = rep.body['status'];;
+          this.response = rep.body['message'];
 
           // si une erreur est présente on l'affiche.
-          if (this.error)
-            window.alert(this.error);
+          if (this.status != 200)
+            window.alert(this.response);
           else {
             // si pas d'erreur on met la variable user de date de signature à la bonne valeur.
             this.getUser().datesignedhosting = this.response;
@@ -107,16 +104,15 @@ export class CharteHostingComponent implements OnInit {
      * @param pseudo pseudo de l'adhérent, vide si c'est lui même qui signe.
      */
   set_adh_signed(pseudo = "") {
-
     // appel au backend pour signer.
     this.http.get(this.authService.SERVER_URL + "?setadhsignedhosting=" + (this.getUser().admin && pseudo ? pseudo : "1") + "&language=" + this.cookie.get('lang'), {observe: 'response'})
       .subscribe(rep => {
-        this.error = rep.body['error'];
-        this.response = rep.body['response'];
+        this.status = rep.body['status'];;
+        this.response = rep.body['message'];
 
         // si une erreur apparaît on l'affiche.
-        if (this.error) {
-          window.alert(this.error);
+        if (this.status != 200) {
+          window.alert(this.response);
         } else {
           if (!this.getUser().admin) // on ne veut pas rafraichir la signature pour un admin il a pas de compte dans fdpsql
             setTimeout(() => {

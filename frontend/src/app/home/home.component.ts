@@ -20,7 +20,7 @@ import {TranslateModule, TranslateLoader, TranslateService} from '@ngx-translate
 })
 export class HomeComponent implements OnInit {
   public response: string;
-  public error: string;
+  public status: number;
   public countminet: Number;
   public counthosting: Number;
   public validToken$: Observable<boolean>;
@@ -131,33 +131,34 @@ export class HomeComponent implements OnInit {
      * @return renvoie un array, sinon erreur.
      */
     get_count_from_api(hosting = false) {
-
         // Appel au backend pour obtenir le nombre de chartes signées.
         this.http.get(this.authService.SERVER_URL + (hosting == true ? "?counthosting=1" : "?countminet=1"), {observe: 'response'})
             .subscribe(rep => {
-                    this.error = rep.body['error'];
-                    this.response = rep.body['response'];
-                    if (this.error)
-                        window.alert(this.error);
+                    this.response = rep.body['message'];
+                    this.status = rep.body['status'];;
+
+                    if (this.status != 200)
+                        window.alert(this.response);
                     else {
                         // si tout va bien on met la variable du home countminet à la bonne valeur.
                         if(hosting == false) {
-                            this.countminetarray = rep.body['response'];
-
+                            this.countminetarray = rep.body['message'];
                             if (this.currentDate.getMonth() >= this.startYearMonth) // si on démarre la nouvelle année scolaire on lit à partir du mois de départ jusqu'au mois de la prochaine année
                                 this.countminet = this.count_date(this.currentDate.getFullYear(), this.startYearMonth, this.countminetarray, true);
                             else // si on est encore sur une année en cours on lit du mois de début (peut être année précédente) jusqu'à son pote de l'année qui suit
                                 this.countminet = this.count_date(this.currentDate.getFullYear() - 1, this.startYearMonth, this.countminetarray, true);
                         } else {
-                            this.counthostingarray = rep.body['response'];
+                            this.counthostingarray = rep.body['message'];
 
                             if (this.currentDate.getMonth() >= this.startYearMonth)
                                 this.counthosting = this.count_date(this.currentDate.getFullYear(), this.startYearMonth, this.counthostingarray, true);
                             else
                                 this.counthosting = this.count_date(this.currentDate.getFullYear() - 1, this.startYearMonth, this.counthostingarray, true);
                         }
-                        if(this.lineChartData.labels.length == 0 && this.countminetarray.length > 0 && this.counthostingarray.length > 0)
-                            this.fill_graph(); // on en profite pour rempli le graph si c'est pas déjà fait (si on a toutes les données)
+                        if(this.countminetarray && this.counthostingarray) {
+                            if (this.lineChartData.labels.length == 0 && this.countminetarray.length > 0 && this.counthostingarray.length > 0)
+                                this.fill_graph(); // on en profite pour rempli le graph si c'est pas déjà fait (si on a toutes les données)
+                        }
                     }
                 }
             )
@@ -205,10 +206,10 @@ export class HomeComponent implements OnInit {
     // Appel au backend pour savoir si on a signé.
     this.http.get(this.authService.SERVER_URL + "?getadhsigned=1", {observe: 'response'})
       .subscribe(rep => {
-        this.error = rep.body['error'];
-        this.response = rep.body['response'];
-        if (this.error)
-          window.alert(this.error);
+        this.status = rep.body['status'];;
+        this.response = rep.body['message'];
+        if (this.status != 200)
+            window.alert(this.response);
         else {
           if (this.response == "signé") {
             // On met la variable user signedhosting à la bonne valeur.
@@ -227,10 +228,10 @@ export class HomeComponent implements OnInit {
     // Appel au backend pour savoir si on a signé.
     this.http.get(this.authService.SERVER_URL + "?getadhsignedhosting=1", {observe: 'response'})
       .subscribe(rep => {
-        this.error = rep.body['error'];
-        this.response = rep.body['response'];
-        if (this.error)
-          window.alert(this.error);
+        this.status = rep.body['status'];;
+        this.response = rep.body['message'];
+        if (this.status != 200)
+          window.alert(this.response);
         else {
           if (this.response == "signé") {
             // On met la variable user signedhosting à la bonne valeur.
