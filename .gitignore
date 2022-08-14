@@ -1,7 +1,7 @@
 .idea
 frontend/.idea
 frontend/node_modules
-frontend/.idea
+frontend/.angular
 backend/.idea
-backend/.angular
+
 

@@ -7,7 +7,7 @@ install_dependencies_angular:
     before_script:    
         - cd frontend  
     script:
-        - npm ci --prefer-ofline --no-audit
+        - npm ci --prefer-offline --no-audit
     artifacts:    
         paths:      
             - frontend/node_modules    
