@@ -32,7 +32,7 @@ deploy_frontend:
     script:
         - cd frontend
         - /usr/bin/ng build
-        - sudo chown gitlab-runner:gitlab-runner * -R
+        - sudo /bin/chown gitlab-runner:gitlab-runner * -R
         - sudo /bin/rm -rf /var/www/frontend/*
         - sudo -u www-data /bin/cp -r * /var/www/frontend/
     tags:    
