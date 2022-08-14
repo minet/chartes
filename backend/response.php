@@ -127,7 +127,23 @@ class responseObject {
         while($row = $result->fetch_row()) {
             $rows[] = $row;
         }
-        $this->message=$rows;
+        $this->message = $rows;
         $this->status = 200;
     }
+
+    /**
+    * Permet de renvoyer un tableau comportant nom, prenom, id et login des personnes ayant une cotis active mais n'ayant pas signé la charte MiNET
+    * @return un tableau avec les champs liés aux personnes concernées
+    */
+    function list_nonsignatory() {
+        global $mysqli;
+        $result = $mysqli->query("SELECT nom,prenom,login,id from adherents where datesignedminet IS  NULL AND date_de_depart > NOW();");
+        $rows = [];
+        while ($row = $result->fetch_row()) {
+            $rows[] = $row;
+        }
+        $this->message = $rows;
+        $this->status = 200;
+    }
+
 }

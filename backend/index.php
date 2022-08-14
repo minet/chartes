@@ -52,6 +52,8 @@ if(get_id()) {
     $response->countcharter(); // on ne veut que les chartes miNET
   else if ($_GET['counthosting'] && is_admin())
     $response->countcharter(true); // on ne veut que les chartes hosting
+  else if ($_GET['list_nonsignatory'] && is_admin())
+      $response->list_nonsignatory(); //
   else {
       $response->response = "Bad request !";
       $response->status = 400;

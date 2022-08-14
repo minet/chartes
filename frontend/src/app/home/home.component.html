@@ -73,10 +73,40 @@
             </tbody>
           </table>
         </div>
+        <div>
+          <h5>Adhérents non signataires</h5>
+          <p>
+            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+              {{ getCountNonSignatoryMembersArray().length }} adhérent(s)
+            </button>
+          </p>
+          <div class="collapse" id="collapseExample">
+            <div class="card card-body">
+              <p>Cette liste correspond aux adhérents dont la cotisation est en cours et dont la signature de la charte n'a pas été effectuée.</p>
+              <p *ngIf="this.getCountNonSignatoryMembersArray().length == 0">Tous les adhérents dont la cotisation est toujours en cours ont bien signé leur charte !</p>
+              <table class="table" *ngIf="this.getCountNonSignatoryMembersArray()">
+                <thead>
+                <tr>
+                  <th scope="col">Login</th>
+                  <th scope="col">Prénom</th>
+                  <th scope="col">Nom</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor = "let i of this.getCountNonSignatoryMembersArray()">
+                  <td><a target="_blank" href="https://adh6.minet.net/fr/member/view/{{ i[3] }}">{{ i[0] }}</a></td>
+                  <td>{{ i[1] }}</td>
+                  <td>{{ i[2]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+      </div>
       </div>
       <div *ngIf="!this.userService.validToken">
         <p>{{'welcome.need_login' | translate}}</p>
-        <button class="btn btn-success btn-lg" type="button">Login </button>
+        <button class="btn btn-success btn-lg" type="button">{{'menu.login' | translate}} </button>
       </div>
     </div>
   </div>

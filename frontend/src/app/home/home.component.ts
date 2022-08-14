@@ -24,6 +24,7 @@ export class HomeComponent implements OnInit {
   public countminet: Number;
   public counthosting: Number;
   public validToken$: Observable<boolean>;
+  private countnonsignatorymembers: []; // pour contenir les informations sur les adhérents non signataires de la charte minet
   private countminetarray: []; // pour contenir les valeurs des cotisations par jour et la date
   private counthostingarray: []; // pour contenir les valeurs des cotisations par jour et la date
   private date: Date;
@@ -96,6 +97,7 @@ export class HomeComponent implements OnInit {
                     // Pas besoin de recharger les infos du compte de chartes quand on est non admin
                     this.get_count_from_api();
                     this.get_count_from_api(true);
+                    this.get_non_signatory_members();
                 }
             }
         }, 1000);
@@ -119,66 +121,74 @@ export class HomeComponent implements OnInit {
   }
 
     /**
+     * Permet de renvoyer l'array countnonsignatorymembersarray
+     * @return : array
+     */
+ getCountNonSignatoryMembersArray(): any {
+    return this.countnonsignatorymembers;
+ }
+
+    /**
      * Permet de renvoyer l'array countminetarray
      * @return : array
      */
-    getCountMinetArray(): any {
-        return this.countminetarray;
-    }
+ getCountMinetArray(): any {
+    return this.countminetarray;
+ }
 
     /**
      * Fonction permettant de récupérer le tableau complet des valeurs de signature avec les dates
      * @return renvoie un array, sinon erreur.
      */
-    get_count_from_api(hosting = false) {
-        // Appel au backend pour obtenir le nombre de chartes signées.
-        this.http.get(this.authService.SERVER_URL + (hosting == true ? "?counthosting=1" : "?countminet=1"), {observe: 'response'})
-            .subscribe(rep => {
-                    this.response = rep.body['message'];
-                    this.status = rep.body['status'];;
+  get_count_from_api(hosting = false) {
+    // Appel au backend pour obtenir le nombre de chartes signées.
+    this.http.get(this.authService.SERVER_URL + (hosting == true ? "?counthosting=1" : "?countminet=1"), {observe: 'response'})
+        .subscribe(rep => {
+                this.response = rep.body['message'];
+                this.status = rep.body['status'];
 
-                    if (this.status != 200)
-                        window.alert(this.response);
-                    else {
-                        // si tout va bien on met la variable du home countminet à la bonne valeur.
-                        if(hosting == false) {
-                            this.countminetarray = rep.body['message'];
-                            if (this.currentDate.getMonth() >= this.startYearMonth) // si on démarre la nouvelle année scolaire on lit à partir du mois de départ jusqu'au mois de la prochaine année
-                                this.countminet = this.count_date(this.currentDate.getFullYear(), this.startYearMonth, this.countminetarray, true);
-                            else // si on est encore sur une année en cours on lit du mois de début (peut être année précédente) jusqu'à son pote de l'année qui suit
-                                this.countminet = this.count_date(this.currentDate.getFullYear() - 1, this.startYearMonth, this.countminetarray, true);
-                        } else {
-                            this.counthostingarray = rep.body['message'];
+                if (this.status != 200)
+                    window.alert(this.response);
+                else {
+                    // si tout va bien on met la variable du home countminet à la bonne valeur.
+                    if(hosting == false) {
+                        this.countminetarray = rep.body['message'];
+                        if (this.currentDate.getMonth() >= this.startYearMonth) // si on démarre la nouvelle année scolaire on lit à partir du mois de départ jusqu'au mois de la prochaine année
+                            this.countminet = this.count_date(this.currentDate.getFullYear(), this.startYearMonth, this.countminetarray, true);
+                        else // si on est encore sur une année en cours on lit du mois de début (peut être année précédente) jusqu'à son pote de l'année qui suit
+                            this.countminet = this.count_date(this.currentDate.getFullYear() - 1, this.startYearMonth, this.countminetarray, true);
+                    } else {
+                        this.counthostingarray = rep.body['message'];
 
-                            if (this.currentDate.getMonth() >= this.startYearMonth)
-                                this.counthosting = this.count_date(this.currentDate.getFullYear(), this.startYearMonth, this.counthostingarray, true);
-                            else
-                                this.counthosting = this.count_date(this.currentDate.getFullYear() - 1, this.startYearMonth, this.counthostingarray, true);
-                        }
-                        if(this.countminetarray && this.counthostingarray) {
-                            if (this.lineChartData.labels.length == 0 && this.countminetarray.length > 0 && this.counthostingarray.length > 0)
-                                this.fill_graph(); // on en profite pour rempli le graph si c'est pas déjà fait (si on a toutes les données)
-                        }
+                        if (this.currentDate.getMonth() >= this.startYearMonth)
+                            this.counthosting = this.count_date(this.currentDate.getFullYear(), this.startYearMonth, this.counthostingarray, true);
+                        else
+                            this.counthosting = this.count_date(this.currentDate.getFullYear() - 1, this.startYearMonth, this.counthostingarray, true);
+                    }
+                    if(this.countminetarray && this.counthostingarray) {
+                        if (this.lineChartData.labels.length == 0 && this.countminetarray.length > 0 && this.counthostingarray.length > 0)
+                            this.fill_graph(); // on en profite pour rempli le graph si c'est pas déjà fait (si on a toutes les données)
                     }
                 }
-            )
-    }
+            }
+        )
+  }
 
     /**
-     * Remplit la courbe avec les données récoltées
-     */
-    fill_graph() {
-        for(this.i = 2; this.i > 0; this.i--) { // on lit jusqu'en 2021, pas besoin de +
-            for(this.j = (this.i == 2 ? this.currentDate.getMonth() - 2 : 1); this.j < 13; this.j++) { // volontairement laissé 12 mois + 2 pour avoir une plus belle lisibilité des données
-                this.lineChartData.labels.push(this.currentDate.getFullYear()+1-this.i + "-" + this.j);
-                this.lineChartData.datasets[0].data.push(this.count_date(this.currentDate.getFullYear()+1-this.i, this.j - 1, this.countminetarray))
-                this.lineChartData.datasets[1].data.push(this.count_date(this.currentDate.getFullYear()+1-this.i, this.j - 1, this.counthostingarray))
-                if(this.j == this.currentDate.getMonth()+1 && this.i == 1) // si on dépasse le mois actuel dans l'année en cours on sort de la boucle
-                    break;
-            }
+    * Remplit la courbe avec les données récoltées
+    */
+  fill_graph() {
+    for(this.i = 2; this.i > 0; this.i--) { // on lit jusqu'en 2021, pas besoin de +
+        for(this.j = (this.i == 2 ? this.currentDate.getMonth() - 2 : 1); this.j < 13; this.j++) { // volontairement laissé 12 mois + 2 pour avoir une plus belle lisibilité des données
+            this.lineChartData.labels.push(this.currentDate.getFullYear()+1-this.i + "-" + this.j);
+            this.lineChartData.datasets[0].data.push(this.count_date(this.currentDate.getFullYear()+1-this.i, this.j - 1, this.countminetarray))
+            this.lineChartData.datasets[1].data.push(this.count_date(this.currentDate.getFullYear()+1-this.i, this.j - 1, this.counthostingarray))
+            if(this.j == this.currentDate.getMonth()+1 && this.i == 1) // si on dépasse le mois actuel dans l'année en cours on sort de la boucle
+                break;
         }
-        this.chart?.update(); // update de la courbe (important)
     }
+    this.chart?.update(); // update de la courbe (important)
+  }
 
     /**
      * Fonction permettant de renvoyer le compte du nombre de chartes de fonctionnement réseau signées.
@@ -206,7 +216,7 @@ export class HomeComponent implements OnInit {
     // Appel au backend pour savoir si on a signé.
     this.http.get(this.authService.SERVER_URL + "?getadhsigned=1", {observe: 'response'})
       .subscribe(rep => {
-        this.status = rep.body['status'];;
+        this.status = rep.body['status'];
         this.response = rep.body['message'];
         if (this.status != 200)
             window.alert(this.response);
@@ -228,7 +238,7 @@ export class HomeComponent implements OnInit {
     // Appel au backend pour savoir si on a signé.
     this.http.get(this.authService.SERVER_URL + "?getadhsignedhosting=1", {observe: 'response'})
       .subscribe(rep => {
-        this.status = rep.body['status'];;
+        this.status = rep.body['status'];
         this.response = rep.body['message'];
         if (this.status != 200)
           window.alert(this.response);
@@ -240,6 +250,25 @@ export class HomeComponent implements OnInit {
             this.getUser().signedhosting = false;
         }
       })
+  }
+
+    /**
+     * Permet de renvoyer la liste des adhérents dont la cotisation est en cours et qui n'ont pas signé la charte minet
+     * @return : set la variable countnonsignatorymembers avec le tableau renvoyé par le backend
+     */
+    get_non_signatory_members() {
+      // Appel au backend pour savoir si on a signé.
+      this.http.get(this.authService.SERVER_URL + "?list_nosignatory=1", {observe: 'response'})
+          .subscribe(rep => {
+              this.status = rep.body['status'];
+              this.response = rep.body['message'];
+              if (this.status != 200)
+                  window.alert(this.response);
+              else {
+                  // On met la variable user countnonsignatorymembers à la bonne valeur.
+                  this.countnonsignatorymembers = rep.body['message'];
+              }
+          })
   }
 
     /**
