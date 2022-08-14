@@ -4,6 +4,7 @@ stages:
 
 install_dependencies_angular:  
     stage: dependencies
+    image: node
     before_script:    
         - cd frontend  
     script:
