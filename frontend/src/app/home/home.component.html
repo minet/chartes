@@ -75,15 +75,15 @@
         </div>
         <div>
           <h5>Adhérents non signataires</h5>
+          <p *ngIf="! this.getCountNonSignatoryMembersArray()">Tous les adhérents dont la cotisation est toujours en cours ont bien signé leur charte !</p>
           <p>
-            <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
+            <button class="btn btn-primary" *ngIf="this.getCountNonSignatoryMembersArray()" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">
               {{ getCountNonSignatoryMembersArray().length }} adhérent(s)
             </button>
           </p>
           <div class="collapse" id="collapseExample">
             <div class="card card-body">
               <p>Cette liste correspond aux adhérents dont la cotisation est en cours et dont la signature de la charte n'a pas été effectuée.</p>
-              <p *ngIf="this.getCountNonSignatoryMembersArray().length == 0">Tous les adhérents dont la cotisation est toujours en cours ont bien signé leur charte !</p>
               <table class="table" *ngIf="this.getCountNonSignatoryMembersArray()">
                 <thead>
                 <tr>
